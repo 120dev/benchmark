@@ -13,11 +13,14 @@ while ! pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} ; do
 done
 
 # Create the required extensions if they are not already present.
-psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS cube" 
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE DATABASE IF NOT EXISTS bench;"
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE DATABASE pgbench_db;"
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS cube"
 psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS earthdistance" 
 psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE TABLE IF NOT EXISTS gps_data (id SERIAL PRIMARY KEY, latitude NUMERIC, longitude NUMERIC);"
 psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE TABLE IF NOT EXISTS points_of_interest (id SERIAL PRIMARY KEY, name TEXT, latitude NUMERIC, longitude NUMERIC);"
-psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE DATABASE pgbench_db;"
+
+
 
 echo "Benchmarking started..."
 echo "Benchmarking started..." >> benchmark_results.txt
