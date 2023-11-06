@@ -4,43 +4,44 @@
 start_time_root=$(date +%s%N)
 
 # Convert environment variables file from DOS to UNIX format and load it.
-dos2unix /scripts/.env > /dev/null 2>&1
+dos2unix /scripts/.env 
 source /scripts/.env
 
 # Wait until PostgreSQL is ready to accept commands.
-while ! pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} > /dev/null 2>&1; do
+while ! pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} ; do
   sleep 1
 done
 
 # Create the required extensions if they are not already present.
-psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS cube" > /dev/null 2>&1
-psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS earthdistance" > /dev/null 2>&1
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS cube" 
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS earthdistance" 
 
 echo "Benchmarking started..."
 echo "Benchmarking started..." >> benchmark_results.txt
-
-# Create tables to store GPS data and points of interest.
-psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE TABLE IF NOT EXISTS gps_data (id SERIAL PRIMARY KEY, latitude NUMERIC, longitude NUMERIC);" > /dev/null 2>&1
-psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE TABLE IF NOT EXISTS points_of_interest (id SERIAL PRIMARY KEY, name TEXT, latitude NUMERIC, longitude NUMERIC);" > /dev/null 2>&1
 
 # Begin timing the pgbench insert operations.
 start_time=$(date +%s%N)
 
 # Initialize and run pgbench benchmarks.
-psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE DATABASE pgbench_db;" > /dev/null 2>&1
-pgbench -i -U ${POSTGRES_USER} pgbench_db > /dev/null 2>&1
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE DATABASE pgbench_db;"
+pgbench -i -U ${POSTGRES_USER} pgbench_db
 pgbench -U ${POSTGRES_USER} -c 50 -j 8 -t 1000 pgbench_db
 duration=$(($(date +%s%N) - start_time))
 echo "pgbench insertion time: $((duration / 1000000)) ms
 " >> benchmark_results.txt
 # --------------------------------------------------------------------------------------------------------------
 
+
+# Create tables to store GPS data and points of interest.
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE TABLE IF NOT EXISTS gps_data (id SERIAL PRIMARY KEY, latitude NUMERIC, longitude NUMERIC);" 
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE TABLE IF NOT EXISTS points_of_interest (id SERIAL PRIMARY KEY, name TEXT, latitude NUMERIC, longitude NUMERIC);" 
+
 # Insert fake GPS coordinates data.
 start_time=$(date +%s%N)
 for i in {1..100}; do
     lat=$(echo "40 + $RANDOM * 0.01" | bc -l)
     lon=$(echo "-73 + $RANDOM * 0.01" | bc -l)
-    PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "INSERT INTO gps_data (latitude, longitude) VALUES ($lat, $lon);" > /dev/null;
+    PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "INSERT INTO gps_data (latitude, longitude) VALUES ($lat, $lon);" 
 done
 duration=$(($(date +%s%N) - start_time))
 echo "GPS data insertion time: $((duration / 1000000)) ms" >> benchmark_results.txt
@@ -50,7 +51,7 @@ start_time=$(date +%s%N)
 for i in {1..100}; do
     lat=$(echo "40 + $RANDOM * 0.01" | bc -l)
     lon=$(echo "-73 + $RANDOM * 0.01" | bc -l)
-    PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "INSERT INTO points_of_interest (name, latitude, longitude) VALUES ('Point $i', $lat, $lon);" > /dev/null;
+    PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "INSERT INTO points_of_interest (name, latitude, longitude) VALUES ('Point $i', $lat, $lon);" 
 done
 duration=$(($(date +%s%N) - start_time))
 echo "Points of interest insertion time: $((duration / 1000000)) ms" >> benchmark_results.txt
