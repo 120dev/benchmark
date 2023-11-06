@@ -9,7 +9,7 @@ source /scripts/.env
 
 # Wait until PostgreSQL is ready to accept commands.
 while ! pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} ; do
-  sleep 1
+  sleep 2
 done
 
 # Create the required extensions if they are not already present.
