@@ -16,6 +16,7 @@ done
 psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS cube" > /dev/null 2>&1
 psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS earthdistance" > /dev/null 2>&1
 
+echo "Benchmarking started..."
 echo "Benchmarking started..." >> benchmark_results.txt
 
 # Create tables to store GPS data and points of interest.
