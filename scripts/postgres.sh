@@ -13,7 +13,7 @@ while ! pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} ; do
 done
 
 # Create the required extensions if they are not already present.
-psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE DATABASE IF NOT EXISTS bench;"
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE DATABASE bench;"
 psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE DATABASE pgbench_db;"
 psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS cube"
 psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CREATE EXTENSION IF NOT EXISTS earthdistance" 
