@@ -23,12 +23,12 @@ echo "Benchmarking started..."
 echo "Benchmarking started..." >> benchmark_results.txt
 
 # Begin timing the pgbench insert operations.
-start_time=$(date +%s%N)
-pgbench -i -U ${POSTGRES_USER} pgbench_db
-pgbench -U ${POSTGRES_USER} -c 50 -j 8 -t 1000 pgbench_db
-duration=$(($(date +%s%N) - start_time))
-echo "pgbench insertion time: $((duration / 1000000)) ms
-" >> benchmark_results.txt
+#start_time=$(date +%s%N)
+#pgbench -i -U ${POSTGRES_USER} pgbench_db
+#pgbench -U ${POSTGRES_USER} -c 50 -j 8 -t 1000 pgbench_db
+#duration=$(($(date +%s%N) - start_time))
+#echo "pgbench insertion time: $((duration / 1000000)) ms
+#" >> benchmark_results.txt
 # --------------------------------------------------------------------------------------------------------------
 
 
