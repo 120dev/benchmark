@@ -28,7 +28,7 @@ echo "Benchmarking started..." >> benchmark_results.txt
 # Begin timing the pgbench insert operations.
 start_time=$(date +%s%N)
 pgbench -i -U ${POSTGRES_USER} pgbench_db
-pgbench -U ${POSTGRES_USER} -c 50 -j 8 -t 1000 pgbench_db
+pgbench -U ${POSTGRES_USER} -c 15 -j 2 -t 1000 pgbench_db
 duration=$(($(date +%s%N) - start_time))
 echo "pgbench insertion time: $((duration / 1000000)) ms
 " >> benchmark_results.txt
@@ -40,7 +40,7 @@ start_time=$(date +%s%N)
 for i in {1..100}; do
     lat=$(echo "40 + $RANDOM * 0.01" | bc -l)
     lon=$(echo "-73 + $RANDOM * 0.01" | bc -l)
-    PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "INSERT INTO gps_data (latitude, longitude) VALUES ($lat, $lon);" 
+    PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "INSERT INTO gps_data (latitude, longitude) VALUES ($lat, $lon);"  > /dev/null 2>&1
 done
 duration=$(($(date +%s%N) - start_time))
 echo "GPS data insertion time: $((duration / 1000000)) ms" >> benchmark_results.txt
@@ -50,7 +50,7 @@ start_time=$(date +%s%N)
 for i in {1..100}; do
     lat=$(echo "40 + $RANDOM * 0.01" | bc -l)
     lon=$(echo "-73 + $RANDOM * 0.01" | bc -l)
-    PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "INSERT INTO points_of_interest (name, latitude, longitude) VALUES ('Point $i', $lat, $lon);" 
+    PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "INSERT INTO points_of_interest (name, latitude, longitude) VALUES ('Point $i', $lat, $lon);"  > /dev/null 2>&1
 done
 duration=$(($(date +%s%N) - start_time))
 echo "Points of interest insertion time: $((duration / 1000000)) ms" >> benchmark_results.txt
